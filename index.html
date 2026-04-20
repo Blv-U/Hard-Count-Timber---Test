@@ -1,0 +1,341 @@
+
+        <div class="info-box">
+            <h4>SPRZEDAWCA</h4>
+            <p><strong id="out_seller_name">Dexter Vance</strong></p>
+            <p>The North Grip Lumber</p>
+            <p id="out_seller_adr">Paleto Bay, San Andreas</p>
+            <p id="out_seller_tel">Tel: ---</p>
+        </div>
+        <div class="info-box">
+            <h4>NABYWCA</h4>
+            <p><strong id="out_client_name">_________________</strong></p>
+            <p id="out_client_adr">Adres: ---</p>
+            <p id="out_client_tel">Tel: ---</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Lp.</th>
+                <th>Nazwa towaru / usługi</th>
+                <th>Jedn.</th>
+                <th>Ilość</th>
+                <th>Cena $</th>
+                <th style="text-align:right;">Suma $</th>
+            </tr>
+        </thead>
+        <tbody id="items_table">
+            </tbody>
+    </table>
+
+    <div class="summary-flex">
+        <div class="payment-info">
+            <strong>PŁATNOŚĆ:</strong><br>
+            Metoda: <span id="out_pay_method">Gotówka</span><br>
+            Termin: <span id="out_pay_term">Przy odbiorze</span>
+        </div>
+        <div class="total-amount">
+            RAZEM: <span id="out_total">0.00 $</span>
+        </div>
+    </div>
+
+    <div class="signatures">
+        <div class="sig-box">
+            <div style="height:50px"></div>
+            <div class="sig-line">Pieczęć i podpis klienta</div>
+        </div>
+        <div class="sig-box">
+            <div class="signature-display">
+                <div id="out_sig_display" class="font-style-1">D. Vance</div>
+            </div>
+            <div class="sig-line">Wystawił: <span id="out_seller_sig_name">Dexter Vance</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let items = [];
+    document.getElementById('out_date').innerText = "Data wystawienia: " + new Date().toLocaleDateString('pl-PL');
+
+    function update() {
+        const sName = document.getElementById('in_seller_name').value || "Dexter Vance";
+        document.getElementById('out_seller_name').innerText = sName;
+        document.getElementById('out_seller_sig_name').innerText = sName;
+        document.getElementById('out_seller_tel').innerText = "Tel: " + (document.getElementById('in_seller_tel').value || "---");
+        document.getElementById('out_seller_adr').innerText = document.getElementById('in_seller_adr').value || "Paleto Bay, San Andreas";
+
+        document.getElementById('out_client_name').innerText = document.getElementById('in_client_name').value || "_________________";
+        document.getElementById('out_client_adr').innerText = "Adres: " + (document.getElementById('in_client_adr').value || "---");
+        document.getElementById('out_client_tel').innerText = "Tel: " + (document.getElementById('in_client_tel').value || "---");
+
+        document.getElementById('out_inv_num').innerText = "Nr: " + (document.getElementById('in_inv_num').value || "---");
+        document.getElementById('out_pay_method').innerText = document.getElementById('in_pay_method').value;
+        
+        const days = document.getElementById('in_pay_days').value;
+        document.getElementById('out_pay_term').innerText = days ? days + " dni" : "Przy odbiorze";
+
+        const sig = document.getElementById('out_sig_display');
+        const names = sName.split(' ');
+        sig.innerText = names.length > 1 ? names[0].charAt(0) + ". " + names.slice(-1) : sName;
+        sig.className = document.getElementById('in_sig_font').value;
+    }
+
+    function addItem() {
+        const name = document.getElementById('in_item_name').value;
+        const unit = document.getElementById('in_item_unit').value || "szt.";
+        const qty = parseFloat(document.getElementById('in_item_qty').value);
+        const price = parseFloat(document.getElementById('in_item_price').value);
+
+        if(!name || isNaN(qty) || isNaN(price)) return;
+
+        items.push({ name, unit, qty, price, total: qty * price });
+        document.getElementById('in_item_name').value = '';
+        document.getElementById('in_item_qty').value = '';
+        document.getElementById('in_item_price').value = '';
+        render();
+    }
+
+    function render() {
+        const table = document.getElementById('items_table');
+        table.innerHTML = "";
+        let grandTotal = 0;
+        items.forEach((item, index) => {
+            grandTotal += item.total;
+            table.innerHTML += `<tr><td>${index + 1}</td><td>${item.name}</td><td>${item.unit}</td><td>${item.qty}</td><td>${item.price.toFixed(2)}</td><td style="text-align:right; font-weight:bold;">${item.total.toFixed(2)} $</td></tr>`;
+        });
+        document.getElementById('out_total').innerText = grandTotal.toFixed(2) + " $";
+    }
+</script>
+</body>
+</html>
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);
+            width: 500px; opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+
+        .header { display: flex; justify-content: space-between; border-bottom: 4px solid var(--forest); padding-bottom: 15px; margin-bottom: 30px; position: relative; z-index: 1; }
+        .logo-text h1 { margin: 0; font-size: 28px; color: var(--forest); letter-spacing: 2px; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px; position: relative; z-index: 1; }
+        .info-box h4 { border-bottom: 2px solid var(--wood); margin-bottom: 8px; padding-bottom: 3px; color: var(--forest); }
+        .info-box p { margin: 2px 0; font-size: 13px; line-height: 1.4; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; position: relative; z-index: 1; }
+        th { background: var(--forest); color: white; padding: 10px; font-size: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; font-size: 13px; }
+
+        .summary-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px; position: relative; z-index: 1; }
+        .payment-info { font-size: 13px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 5px; border: 1px dashed var(--wood); }
+        .total-amount { font-size: 22px; font-weight: bold; color: var(--forest); text-align: right; }
+
+        .signatures { display: flex; justify-content: space-between; margin-top: 60px; position: relative; z-index: 1; }
+        .sig-box { width: 250px; text-align: center; }
+        .sig-line { border-top: 1px solid #333; margin-top: 40px; font-size: 11px; padding-top: 5px; }
+        
+        /* CZCIONKI PODPISU */
+        .font-style-1 { font-family: 'Brush Script MT', cursive; font-size: 32px; }
+        .font-style-2 { font-family: 'Lucida Handwriting', cursive; font-size: 24px; }
+        .font-style-3 { font-family: 'Courier New', monospace; font-weight: bold; font-size: 24px; text-decoration: underline; }
+        .font-style-4 { font-family: 'Georgia', serif; font-style: italic; font-size: 26px; border-bottom: 2px solid #000; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+            .invoice-page { box-shadow: none; border: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h2 style="color:var(--accent); margin-top:0;"> Panel Logistyczny: The North Grip Lumber</h2>
+    
+    <div class="ctrl-section">
+        <div>
+            <label>Wystawca (Pracownik)</label>
+            <input type="text" id="in_seller_name" placeholder="Imi i Nazwisko" oninput="update()">
+            <input type="text" id="in_seller_tel" placeholder="Nr telefonu" oninput="update()">
+            <input type="text" id="in_seller_adr" placeholder="Adres/Oddzia" oninput="update()">
+        </div>
+        <div>
+            <label>Nabywca (Klient)</label>
+            <input type="text" id="in_client_name" placeholder="Nazwa firmy / Imi" oninput="update()">
+            <input type="text" id="in_client_tel" placeholder="Nr telefonu klienta" oninput="update()">
+            <input type="text" id="in_client_adr" placeholder="Adres klienta" oninput="update()">
+        </div>
+        <div>
+            <label>Ustawienia Faktury</label>
+            <input type="text" id="in_inv_num" placeholder="Nr faktury (np. TNGL/01)" oninput="update()">
+            <select id="in_pay_method" onchange="update()">
+                <option value="Gotówka">Gotówka</option>
+                <option value="Przelew">Przelew</option>
+                <option value="Blik">Blik / Telefon</option>
+            </select>
+            <input type="number" id="in_pay_days" placeholder="Termin (dni)" oninput="update()">
+        </div>
+    </div>
+
+    <label>DODAJ POZYCJ DO LISTY</label>
+    <div class="ctrl-section" style="grid-template-columns: 2fr 1fr 1fr 1fr auto;">
+        <input type="text" id="in_item_name" placeholder="Nazwa towaru">
+        <input type="text" id="in_item_unit" placeholder="Jedn. (np. m3)">
+        <input type="number" id="in_item_qty" placeholder="Ilo">
+        <input type="number" id="in_item_price" placeholder="Cena $">
+        <button class="btn btn-add" onclick="addItem()">+ Dodaj</button>
+    </div>
+
+    <div class="ctrl-section">
+        <div>
+            <label>Styl Podpisu Wystawcy</label>
+            <select id="in_sig_font" onchange="update()">
+                <option value="font-style-1">Elegancki (D. Vance Style)</option>
+                <option value="font-style-2">Szybki / Bazgro</option>
+                <option value="font-style-3">Maszynowy / Techniczny</option>
+                <option value="font-style-4">Klasyczny / Pióro</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn btn-print" onclick="window.print()">Generuj PDF / Drukuj Faktur</button>
+</div>
+
+<div class="invoice-page">
+    <img src="https://i.imgur.com/GjN9K8T.png" class="watermark" alt="logo">
+
+    <div class="header">
+        <div class="logo-text">
+            <h1>THE NORTH GRIP LUMBER</h1>
+            <p style="margin:0; font-size:12px; color:var(--wood); font-weight:bold;">PALETO BAY FOREST INDUSTRY</p>
+        </div>
+        <div style="text-align: right">
+            <h2 style="margin:0; color:var(--wood);">FAKTURA</h2>
+            <p id="out_inv_num" style="margin:5px 0;">Nr: [WPISZ]</p>
+            <p id="out_date" style="font-size:12px; margin:0;"></p>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box">
+            <h4>SPRZEDAWCA</h4>
+            <p><strong id="out_seller_name">Dexter Vance</strong></p>
+            <p>The North Grip Lumber</p>
+            <p id="out_seller_adr">Paleto Bay, San Andreas</p>
+            <p id="out_seller_tel">Tel: ---</p>
+        </div>
+        <div class="info-box">
+            <h4>NABYWCA</h4>
+            <p><strong id="out_client_name">_________________</strong></p>
+            <p id="out_client_adr">Adres: ---</p>
+            <p id="out_client_tel">Tel: ---</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Lp.</th>
+                <th>Nazwa towaru / usugi</th>
+                <th>Jedn.</th>
+                <th>Ilo</th>
+                <th>Cena $</th>
+                <th style="text-align:right;">Suma $</th>
+            </tr>
+        </thead>
+        <tbody id="items_table">
+            </tbody>
+    </table>
+
+    <div class="summary-flex">
+        <div class="payment-info">
+            <strong>Informacje o patnoci:</strong><br>
+            Metoda: <span id="out_pay_method">Gotówka</span><br>
+            Termin: <span id="out_pay_term">Przy odbiorze</span>
+        </div>
+        <div class="total-amount">
+            RAZEM: <span id="out_total">0.00 $</span>
+        </div>
+    </div>
+
+    <div class="signatures">
+        <div class="sig-box">
+            <div class="sig-line">Piecz i podpis klienta</div>
+        </div>
+        <div class="sig-box">
+            <div id="out_sig_display" class="font-style-1">D. Vance</div>
+            <div class="sig-line">Wystawi: <span id="out_seller_sig_name">Dexter Vance</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let items = [];
+    document.getElementById('out_date').innerText = "Data wystawienia: " + new Date().toLocaleDateString();
+
+    function update() {
+        // Dane sprzedawcy
+        const sName = document.getElementById('in_seller_name').value || "Dexter Vance";
+        document.getElementById('out_seller_name').innerText = sName;
+        document.getElementById('out_seller_sig_name').innerText = sName;
+        document.getElementById('out_seller_tel').innerText = "Tel: " + (document.getElementById('in_seller_tel').value || "---");
+        document.getElementById('out_seller_adr').innerText = document.getElementById('in_seller_adr').value || "Paleto Bay, San Andreas";
+
+        // Dane klienta
+        document.getElementById('out_client_name').innerText = document.getElementById('in_client_name').value || "_________________";
+        document.getElementById('out_client_adr').innerText = "Adres: " + (document.getElementById('in_client_adr').value || "---");
+        document.getElementById('out_client_tel').innerText = "Tel: " + (document.getElementById('in_client_tel').value || "---");
+
+        // Dane faktury
+        document.getElementById('out_inv_num').innerText = "Nr: " + (document.getElementById('in_inv_num').value || "---");
+        document.getElementById('out_pay_method').innerText = document.getElementById('in_pay_method').value;
+        
+        const days = document.getElementById('in_pay_days').value;
+        document.getElementById('out_pay_term').innerText = days ? days + " dni" : "Przy odbiorze";
+
+        // Podpis
+        const sig = document.getElementById('out_sig_display');
+        sig.innerText = sName.charAt(0) + ". " + sName.split(' ').slice(-1);
+        sig.className = document.getElementById('in_sig_font').value;
+    }
+
+    function addItem() {
+        const name = document.getElementById('in_item_name').value;
+        const unit = document.getElementById('in_item_unit').value || "szt.";
+        const qty = parseFloat(document.getElementById('in_item_qty').value);
+        const price = parseFloat(document.getElementById('in_item_price').value);
+
+        if(!name || isNaN(qty) || isNaN(price)) return;
+
+        items.push({ name, unit, qty, price, total: qty * price });
+        
+        // Czy pola po dodaniu
+        document.getElementById('in_item_name').value = '';
+        document.getElementById('in_item_qty').value = '';
+        document.getElementById('in_item_price').value = '';
+        
+        render();
+    }
+
+    function render() {
+        const table = document.getElementById('items_table');
+        table.innerHTML = "";
+        let grandTotal = 0;
+
+        items.forEach((item, index) => {
+            grandTotal += item.total;
+            table.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.unit}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.price.toFixed(2)}</td>
+                    <td style="text-align:right; font-weight:bold;">${item.total.toFixed(2)} $</td>
+                </tr>
+            `;
+        });
+        document.getElementById('out_total').innerText = grandTotal.toFixed(2) + " $";
+    }
+</script>
+
+</body>
+</html>
